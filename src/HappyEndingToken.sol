@@ -11,19 +11,17 @@ contract HappyEndingToken is ERC20Burnable, Ownable
     address public marketingWallet;
     address public liquidityPool;
 
-    uint256 public tax;
+    uint256 public sellTax;
 
     mapping(address => bool) public isExcludedFromTax;
 
     constructor() ERC20("HappyEnding", "HAPPY") Ownable(_msgSender())
     {
-        // Set total supply to 100 million tokens.
-        uint256 totalSupply = 100_000_000 * 10 ** decimals();
+        // Set total supply to 525 million tokens.
+        uint256 totalSupply = 525_000_000 * 10 ** decimals();
 
-        marketingWallet = address(0); //TODO set marketing wallet
-
-        // Set tax to 0.1%
-        tax = 10;
+        // Set sell tax to 0.1%
+        sellTax = 10;
 
         isExcludedFromTax[_msgSender()] = true;
         isExcludedFromTax[address(this)] = true;
@@ -38,6 +36,12 @@ contract HappyEndingToken is ERC20Burnable, Ownable
         liquidityPool = _liquidityPool;
     }
 
+    function setMarketingWallet(address _marketingWallet) public onlyOwner
+    {
+        require(_marketingWallet != address(0), "Cannot set marketing wallet to address 0.");
+        marketingWallet = _marketingWallet;
+    }
+
     function _update(address from, address to, uint256 value) internal override
     {
         if (to == liquidityPool &&
@@ -48,7 +52,7 @@ contract HappyEndingToken is ERC20Burnable, Ownable
                 revert ERC20InsufficientBalance(from, fromBalance, value);
             }
 
-            uint256 taxAmount = (value * tax) / 10_000;
+            uint256 taxAmount = (value * sellTax) / 10_000;
             uint256 netAmount = value - taxAmount;
 
             super._update(from, marketingWallet, taxAmount);
