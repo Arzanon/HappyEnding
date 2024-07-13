@@ -9,15 +9,15 @@ import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/Extensions/ERC2
 contract HappyEndingToken is ERC20Burnable, Ownable
 {
     address public marketingWallet;
-    address public liquidityPool;
 
     uint256 public sellTax;
 
+    mapping(address => bool) public liquidityPools;
     mapping(address => bool) public isExcludedFromTax;
 
     constructor() ERC20("HappyEnding", "HAPPY") Ownable(_msgSender())
     {
-        // Set total supply to 525 million tokens.
+        // Set total supply to 525 million tokens
         uint256 totalSupply = 525_000_000 * 10 ** decimals();
 
         // Set sell tax to 0.1%
@@ -33,15 +33,15 @@ contract HappyEndingToken is ERC20Burnable, Ownable
         _mint(_msgSender(), totalSupply);
     }
 
-    function setLiquidityPool(address _liquidityPool) public onlyOwner
+    function setLiquidityPool(address liquidityPool, bool isLiquidityPool) public onlyOwner
     {
-        require(_liquidityPool != address(0), "Cannot set liquidity pool to address 0.");
-        liquidityPool = _liquidityPool;
+        require(liquidityPool != address(0), "Cannot add liquidity pool with address 0.");
+        liquidityPools[liquidityPool] = isLiquidityPool;
     }
 
     function _update(address from, address to, uint256 value) internal override
     {
-        if (to == liquidityPool &&
+        if (liquidityPools[to] == true &&
             !isExcludedFromTax[from])
         {
             uint256 fromBalance = balanceOf(from);

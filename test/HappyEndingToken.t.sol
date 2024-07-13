@@ -9,12 +9,14 @@ contract HappyEndingTest is Test
     HappyEndingToken happyEnding;
 
     address contractCreator;
-    address liquidityPool;
+    address liquidityPool1;
+    address liquidityPool2;
     address marketingWallet;
 
     function setUp() public {
         contractCreator = address(0x099);
-        liquidityPool = address(0x098);
+        liquidityPool1 = address(0x098);
+        liquidityPool2 = address(0x097);
         marketingWallet = address(0x20a29C14384139faE8870D06D1aC2Ea9d218feC9);
 
         vm.prank(contractCreator);
@@ -26,14 +28,18 @@ contract HappyEndingTest is Test
     function testFail_setLiquidityPool_CannotSetAddressToZero() public
     {
         vm.prank(contractCreator);
-        happyEnding.setLiquidityPool(address(0));
+        happyEnding.setLiquidityPool(address(0), true);
     }
 
-    function test_setLiquidityPool_SetAddress() public
+    function test_setLiquidityPool_SetAddresses() public
     {
-        vm.prank(contractCreator);
-        happyEnding.setLiquidityPool(liquidityPool);
-        assertTrue(happyEnding.liquidityPool() == liquidityPool);
+        vm.startPrank(contractCreator);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
+        happyEnding.setLiquidityPool(liquidityPool2, false);
+        assertTrue(happyEnding.liquidityPools(liquidityPool1) == true);
+        assertTrue(happyEnding.liquidityPools(liquidityPool2) == false);
+        assertTrue(happyEnding.liquidityPools(address(0x1)) == false);
+        vm.stopPrank();
     }
 
     //#endregion
@@ -50,18 +56,22 @@ contract HappyEndingTest is Test
         uint256 totalSupply = happyEnding.totalSupply();
         uint256 amountToBurn = 1337_420_69;
         
-        vm.prank(contractCreator);
+        vm.startPrank(contractCreator);
+
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.burn(amountToBurn);
 
         assertTrue(happyEnding.totalSupply() == totalSupply - amountToBurn);
         assertTrue(happyEnding.balanceOf(contractCreator) == totalSupply - amountToBurn);
+
+        vm.stopPrank();
     }
 
     function test_transfer_ZeroTransfer() public
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -78,7 +88,7 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -95,7 +105,7 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
         happyEnding.transfer(address(0x1), type(uint256).max);
 
@@ -106,7 +116,7 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
         happyEnding.transfer(address(0x1), type(uint256).max - 1);
 
@@ -117,7 +127,7 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -140,16 +150,16 @@ contract HappyEndingTest is Test
 
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, 0);
+        happyEnding.transfer(liquidityPool1, 0);
 
         assertTrue(happyEnding.balanceOf(marketingWallet) == 0);
-        assertTrue(happyEnding.balanceOf(liquidityPool) == 0);
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == 0);
         assertTrue(happyEnding.balanceOf(address(0x1)) == totalSupply);
 
         vm.stopPrank();
@@ -161,16 +171,16 @@ contract HappyEndingTest is Test
 
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, 1);
+        happyEnding.transfer(liquidityPool1, 1);
 
         assertTrue(happyEnding.balanceOf(marketingWallet) == 0);
-        assertTrue(happyEnding.balanceOf(liquidityPool) == 1);
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == 1);
         assertTrue(happyEnding.balanceOf(address(0x1)) == totalSupply - 1);
 
         vm.stopPrank();
@@ -180,13 +190,13 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.transfer(address(0x1), happyEnding.totalSupply());
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, type(uint256).max);
+        happyEnding.transfer(liquidityPool1, type(uint256).max);
 
         vm.stopPrank();
     }
@@ -195,13 +205,13 @@ contract HappyEndingTest is Test
     {
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.transfer(address(0x1), happyEnding.totalSupply());
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, type(uint256).max - 1);
+        happyEnding.transfer(liquidityPool1, type(uint256).max - 1);
 
         vm.stopPrank();
     }
@@ -212,42 +222,71 @@ contract HappyEndingTest is Test
 
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, totalSupply);
+        happyEnding.transfer(liquidityPool1, totalSupply);
         uint256 expectedTax = (totalSupply * happyEnding.sellTax()) / 10_000;
         uint256 expectedLeftover = totalSupply - expectedTax;
 
         assertTrue(happyEnding.balanceOf(marketingWallet) == expectedTax);
         assertTrue(happyEnding.balanceOf(address(0x1)) == 0);
-        assertTrue(happyEnding.balanceOf(liquidityPool) == expectedLeftover);
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == expectedLeftover);
 
         vm.stopPrank();
     }
 
-    function test_transfer_TaxedNormalTransfer() public
+    function test_transfer_TaxedNormalTransferOnePool() public
     {
         uint256 totalSupply = happyEnding.totalSupply();
 
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
+        happyEnding.setLiquidityPool(liquidityPool2, false);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
         vm.startPrank(address(0x1));
 
-        happyEnding.transfer(liquidityPool, 1337_420_69);
+        happyEnding.transfer(liquidityPool1, 1337_420_69);
+        happyEnding.transfer(liquidityPool2, 1337_420_69);
         uint256 expectedTax = 133742;
         uint256 expectedLeftover = 133608327;
 
         assertTrue(happyEnding.balanceOf(marketingWallet) == expectedTax);
-        assertTrue(happyEnding.balanceOf(address(0x1)) == totalSupply - 1337_420_69);
-        assertTrue(happyEnding.balanceOf(liquidityPool) == expectedLeftover);
+        assertTrue(happyEnding.balanceOf(address(0x1)) == totalSupply - (1337_420_69 * 2));
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == expectedLeftover);
+        assertTrue(happyEnding.balanceOf(liquidityPool2) == 1337_420_69);
+
+        vm.stopPrank();
+    }
+
+    function test_transfer_TaxedNormalTransferMultiplePools() public
+    {
+        uint256 totalSupply = happyEnding.totalSupply();
+
+        vm.startPrank(contractCreator);
+
+        happyEnding.setLiquidityPool(liquidityPool1, true);
+        happyEnding.setLiquidityPool(liquidityPool2, true);
+        happyEnding.transfer(address(0x1), totalSupply);
+
+        vm.stopPrank();
+        vm.startPrank(address(0x1));
+
+        happyEnding.transfer(liquidityPool1, 1337_420_69);
+        happyEnding.transfer(liquidityPool2, 1337_420_69);
+        uint256 expectedTax = 133742;
+        uint256 expectedLeftover = 133608327;
+
+        assertTrue(happyEnding.balanceOf(marketingWallet) == expectedTax * 2);
+        assertTrue(happyEnding.balanceOf(address(0x1)) == totalSupply - (1337_420_69 * 2));
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == expectedLeftover);
+        assertTrue(happyEnding.balanceOf(liquidityPool2) == expectedLeftover);
 
         vm.stopPrank();
     }
@@ -258,13 +297,13 @@ contract HappyEndingTest is Test
 
         vm.startPrank(contractCreator);
 
-        happyEnding.setLiquidityPool(liquidityPool);
+        happyEnding.setLiquidityPool(liquidityPool1, true);
 
-        happyEnding.transfer(liquidityPool, 1337_420_69);
+        happyEnding.transfer(liquidityPool1, 1337_420_69);
 
         assertTrue(happyEnding.balanceOf(marketingWallet) == 0);
         assertTrue(happyEnding.balanceOf(contractCreator) == totalSupply - 1337_420_69);
-        assertTrue(happyEnding.balanceOf(liquidityPool) == 1337_420_69);
+        assertTrue(happyEnding.balanceOf(liquidityPool1) == 1337_420_69);
 
         vm.stopPrank();
     }
