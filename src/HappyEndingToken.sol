@@ -15,7 +15,7 @@ contract HappyEnding is ERC20Burnable, Ownable
     mapping(address => bool) public liquidityPools;
     mapping(address => bool) public isExcludedFromTax;
 
-    constructor() ERC20("HappyEnding", "HAPPY") Ownable(_msgSender())
+    constructor() ERC20("Happy Ending", "HAPPY") Ownable(_msgSender())
     {
         // Set total supply to 525 million tokens
         uint256 totalSupply = 525_000_000 * 10 ** decimals();
