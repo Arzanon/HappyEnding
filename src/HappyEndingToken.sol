@@ -6,7 +6,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/Extensions/ERC20Burnable.sol";
 
-contract HappyEndingToken is ERC20Burnable, Ownable
+contract HappyEnding is ERC20Burnable, Ownable
 {
     address public marketingWallet;
 
