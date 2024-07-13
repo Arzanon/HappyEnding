@@ -15,7 +15,7 @@ contract HappyEndingTest is Test
     function setUp() public {
         contractCreator = address(0x099);
         liquidityPool = address(0x098);
-        marketingWallet = address(0x097);
+        marketingWallet = address(0x20a29C14384139faE8870D06D1aC2Ea9d218feC9);
 
         vm.prank(contractCreator);
         happyEnding = new HappyEndingToken();
@@ -34,19 +34,6 @@ contract HappyEndingTest is Test
         vm.prank(contractCreator);
         happyEnding.setLiquidityPool(liquidityPool);
         assertTrue(happyEnding.liquidityPool() == liquidityPool);
-    }
-
-    function testFail_setMarketingWallet_CannotSetAddressToZero() public
-    {
-        vm.prank(contractCreator);
-        happyEnding.setMarketingWallet(address(0));
-    }
-
-    function test_setMarketingWallet_SetAddress() public
-    {
-        vm.prank(contractCreator);
-        happyEnding.setMarketingWallet(marketingWallet);
-        assertTrue(happyEnding.marketingWallet() == marketingWallet);
     }
 
     //#endregion
@@ -75,7 +62,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -93,7 +79,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -111,7 +96,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         happyEnding.transfer(address(0x1), type(uint256).max);
 
@@ -123,7 +107,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         happyEnding.transfer(address(0x1), type(uint256).max - 1);
 
@@ -135,7 +118,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         uint256 totalSupply = happyEnding.totalSupply();
 
@@ -159,7 +141,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
@@ -181,7 +162,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
@@ -201,7 +181,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), happyEnding.totalSupply());
 
         vm.stopPrank();
@@ -217,7 +196,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), happyEnding.totalSupply());
 
         vm.stopPrank();
@@ -235,7 +213,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
@@ -259,7 +236,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
         happyEnding.transfer(address(0x1), totalSupply);
 
         vm.stopPrank();
@@ -283,7 +259,6 @@ contract HappyEndingTest is Test
         vm.startPrank(contractCreator);
 
         happyEnding.setLiquidityPool(liquidityPool);
-        happyEnding.setMarketingWallet(marketingWallet);
 
         happyEnding.transfer(liquidityPool, 1337_420_69);
 

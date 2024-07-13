@@ -23,6 +23,9 @@ contract HappyEndingToken is ERC20Burnable, Ownable
         // Set sell tax to 0.1%
         sellTax = 10;
 
+        // Set marketing wallet where tax is collected
+        marketingWallet = 0x20a29C14384139faE8870D06D1aC2Ea9d218feC9;
+
         isExcludedFromTax[_msgSender()] = true;
         isExcludedFromTax[address(this)] = true;
         isExcludedFromTax[address(0)] = true;
@@ -34,12 +37,6 @@ contract HappyEndingToken is ERC20Burnable, Ownable
     {
         require(_liquidityPool != address(0), "Cannot set liquidity pool to address 0.");
         liquidityPool = _liquidityPool;
-    }
-
-    function setMarketingWallet(address _marketingWallet) public onlyOwner
-    {
-        require(_marketingWallet != address(0), "Cannot set marketing wallet to address 0.");
-        marketingWallet = _marketingWallet;
     }
 
     function _update(address from, address to, uint256 value) internal override
