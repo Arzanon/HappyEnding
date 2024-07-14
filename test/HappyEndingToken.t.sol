@@ -6,7 +6,7 @@ import "../src/HappyEndingToken.sol";
 
 contract HappyEndingTest is Test
 {
-    HappyEndingToken happyEnding;
+    HappyEnding happyEnding;
 
     address contractCreator;
     address liquidityPool1;
@@ -20,7 +20,7 @@ contract HappyEndingTest is Test
         marketingWallet = address(0x20a29C14384139faE8870D06D1aC2Ea9d218feC9);
 
         vm.prank(contractCreator);
-        happyEnding = new HappyEndingToken();
+        happyEnding = new HappyEnding();
     }
 
     //#region TEST owner set address functions
