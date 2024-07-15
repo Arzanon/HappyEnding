@@ -9,10 +9,11 @@ import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/Extensions/ERC2
 contract HappyEnding is ERC20Burnable, Ownable
 {
     address public marketingWallet;
+    address public liquidityPool1;
+    address public liquidityPool2;
 
     uint256 public sellTax;
 
-    mapping(address => bool) public liquidityPools;
     mapping(address => bool) public isExcludedFromTax;
 
     constructor() ERC20("Happy Ending", "HAPPY") Ownable(_msgSender())
@@ -33,16 +34,27 @@ contract HappyEnding is ERC20Burnable, Ownable
         _mint(_msgSender(), totalSupply);
     }
 
-    function setLiquidityPool(address liquidityPool, bool isLiquidityPool) public onlyOwner
+    function setLiquidityPool1(address liquidityPool) public onlyOwner
     {
-        require(liquidityPool != address(0), "Cannot add liquidity pool with address 0.");
-        liquidityPools[liquidityPool] = isLiquidityPool;
+        liquidityPool1 = liquidityPool;
+    }
+
+    function setLiquidityPool2(address liquidityPool) public onlyOwner
+    {
+        liquidityPool2 = liquidityPool;
     }
 
     function _update(address from, address to, uint256 value) internal override
     {
-        if (liquidityPools[to] == true &&
-            !isExcludedFromTax[from])
+        address lpAddress = address(0);
+
+        if (!isExcludedFromTax[from] &&
+            (to == liquidityPool1 || to == liquidityPool2))
+        {
+            lpAddress = to;
+        }
+
+        if (lpAddress != address(0))
         {
             uint256 fromBalance = balanceOf(from);
             if (fromBalance < value) {
