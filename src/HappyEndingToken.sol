@@ -25,7 +25,7 @@ contract HappyEnding is ERC20Burnable, Ownable
         sellTax = 10;
 
         // Set marketing wallet where tax is collected
-        marketingWallet = 0x20a29C14384139faE8870D06D1aC2Ea9d218feC9;
+        marketingWallet = 0xE35c58Ba9BaE2C12Bc1214eb2572E8c69ee30AC6;
 
         isExcludedFromTax[_msgSender()] = true;
         isExcludedFromTax[address(this)] = true;
